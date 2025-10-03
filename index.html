@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="./style.css">
+    <title>Projetos Tiago</title>
+    <!-- Tailwind CSS para um design moderno e responsivo -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome para ícones -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --bg-color: #0d1b2a;
+            --text-color: #FFFFFF;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            background-image:
+                linear-gradient(rgba(255, 255, 255, 0.05) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255, 255, 255, 0.05) 1px, transparent 1px),
+                linear-gradient(rgba(255, 255, 255, 0.04) 2px, transparent 2px),
+                linear-gradient(90deg, rgba(255, 255, 255, 0.04) 2px, transparent 2px);
+            background-size: 20px 20px, 20px 20px, 100px 100px, 100px 100px;
+            background-position: -1px -1px, -1px -1px, -1px -1px, -1px -1px;
+            transition: background-color 0.5s ease;
+        }
+    </style>
+
+</head>
+
+<body class="flex items-center justify-center min-h-screen">
+
+    <!-- Container Principal -->
+    <div class="w-full max-w-lg p-4">
+
+        
+        <!-- Container da Aplicação Principal (agora cobre tudo) -->
+        <div id="app-container" class="quadrado vertical principal">
+            <div class="bg-gray-800/50 border border-gray-700 rounded-2xl p-6 flex flex-col gap-6">
+                <!-- Logo e Título -->
+                <img src="logo-tiago.png" alt="Logo" class="logo-imagem mx-auto">
+                <h1 id="difficulty-title" class="text-3xl font-bold text-white text-center">Visualizador de Projetos
+                </h1>
+
+                <!-- Seletores de Dificuldade -->
+                <div id="difficulty-selector" class="grid grid-cols-2 sm:grid-cols-4 gap-2">
+                    <button onclick="selectDifficulty('facil')"
+                        class="difficulty-btn w-full bg-gray-700 text-white font-bold py-2 px-3 rounded-lg hover:bg-gray-600 transition-all duration-300">Fácil</button>
+                    <button onclick="selectDifficulty('medio')"
+                        class="difficulty-btn w-full bg-gray-700 text-white font-bold py-2 px-3 rounded-lg hover:bg-gray-600 transition-all duration-300">Médio</button>
+                    <button onclick="selectDifficulty('dificil')"
+                        class="difficulty-btn w-full bg-gray-700 text-white font-bold py-2 px-3 rounded-lg hover:bg-gray-600 transition-all duration-300">Difícil</button>
+                    <button onclick="selectDifficulty('desafio')"
+                        class="difficulty-btn w-full bg-gray-700 text-white font-bold py-2 px-3 rounded-lg hover:bg-gray-600 transition-all duration-300">Desafio</button>
+                    <div class="col-span-2 sm:col-span-4 flex justify-center mt-2">
+                        <button onclick="selectDifficulty('chapa metálica')"
+                            class="difficulty-btn bg-gray-700 text-white font-bold py-2 px-6 rounded-lg hover:bg-gray-600 transition-all duration-300">Chapa
+                            Metálica</button>
+                    </div>
+                </div>
+
+                <!-- Botões Aleatório e Ver Todos -->
+                <div class="flex space-x-2">
+                    <button id="buscar-projeto-btn" onclick="buscarProjeto()"
+                        class="w-full bg-orange-600 text-white font-bold py-3 px-4 rounded-lg hover:bg-orange-700 transition-all duration-300 text-lg shadow-lg shadow-orange-600/20">
+                        <i class="fas fa-random mr-2"></i>Aleatório
+                    </button>
+                    <button id="listar-projetos-btn" onclick="listarProjetos()"
+                        class="w-full bg-gray-700 text-white font-bold py-3 px-4 rounded-lg hover:bg-gray-600 transition-all duration-300 text-lg shadow-lg">
+                        <i class="fas fa-list mr-2"></i>Ver todos
+                    </button>
+                </div>
+
+                <!-- Área de exibição da imagem -->
+                <div id="image-display"
+                    class="mt-2 p-6 border-2 border-dashed border-gray-700 rounded-2xl min-h-[250px] flex flex-col items-center justify-center bg-gray-800/70 shadow-lg shadow-black/30">
+                    <p id="image-placeholder" class="text-gray-400 text-lg mb-2">Imagem do Projeto</p>
+                    <img id="project-image" src="" alt="Imagem do Projeto" class="max-w-full max-h-[400px] rounded-xl"
+                        style="display: none;" />
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+
+    <!-- Roleta de Animação -->
+    <div id="roulette-wrapper" class="w-full relative h-28 overflow-hidden mt-4" style="display: none;">
+        <div
+            class="absolute top-0 left-1/2 -translate-x-1/2 w-1 h-full bg-orange-500 z-20 rounded shadow-lg shadow-orange-500/50">
+        </div>
+        <div id="roulette-strip" class="absolute top-0 left-0 h-full flex items-center"
+            style="transition: transform 4000ms cubic-bezier(0.25, 1, 0.5, 1);"></div>
+    </div>
+    </div>
+    </div>
+    </div>
+
+    <!-- Modal de Tela Cheia -->
+    <div id="fullscreen-modal"
+        class="fixed inset-0 bg-black bg-opacity-90 flex items-center justify-center z-50 backdrop-blur-sm"
+        style="display: none; background-color: #242627">
+        <span id="close-modal"
+            class="absolute top-4 right-6 text-white text-5xl font-bold cursor-pointer hover:text-gray-300 transition-colors">&times;</span>
+        <img id="fullscreen-image" src="" alt="Imagem do Projeto em Tela Cheia" class="imagem-fullscreen">
+    </div>
+
+    <!-- Modal da Lista de Arquivos -->
+    <div id="list-modal"
+        class="fixed inset-0 bg-black bg-opacity-90 flex items-center justify-center z-50 backdrop-blur-sm p-4"
+        style="display: none;">
+        <div class="glass-panel rounded-2xl shadow-2xl w-full max-w-3xl p-6 relative">
+            <span id="close-list-modal"
+                class="absolute top-4 right-5 text-white text-3xl font-bold cursor-pointer hover:text-gray-300">&times;</span>
+            <h2 class="text-2xl font-bold text-white mb-4">Lista de Projetos</h2>
+            <!-- Barra de Pesquisa -->
+            <div class="mb-4">
+                <input id="search-bar" type="text" placeholder="Pesquisar projeto..."
+                    class="w-full p-2 rounded-lg bg-gray-800 text-white border border-gray-600 focus:ring-2 focus:ring-orange-500 focus:outline-none" />
+            </div>
+            <div id="file-list-container" class="max-h-[70vh] overflow-y-auto pr-2">
+                <div id="file-list" class="space-y-2 text-left"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Rodapé -->
+    <footer class="fixed bottom-0 left-0 w-full p-4 text-center text-gray-500 text-xs">
+        <p>&copy; 2025 | Bruno A. Kohler, Matheus Gums & Tiago O. Menezes.</p>
+
+    </footer>
+
+    <script>
+        // --- LÓGICA DA APLICAÇÃO ---
+
+        // =================================================================================
+        //      CONFIGURAÇÃO DA API E PASTAS DO GOOGLE DRIVE
+        // =================================================================================
+        const GOOGLE_API_KEY = 'AIzaSyB_N0r6Sd8pDG79ZmxpOmmp7wh7191_iU8';
+        const FOLDER_IDS = {
+            facil: '1BQrlO9qsQVkI9VG5P6OLdlffYcLh_QnW',
+            medio: '1zRt7m8G7RsOpK-5eUccUtlnTbX76hS0a',
+            dificil: '1GsmAxBq9c-wQvHakISUcWgm96P8eLJhR',
+            desafio: '1QQTbs3fEw4xEzDadI_YhMa4Cvn0Ttik0',
+            chapametalica: '1lzvGtQcj9aQCLLQmKnUdQf6XkXSVkXQC'
+        };
+
+
+
+        /*id das pastas do drive*/
+        // =================================================================================
+
+        const projectImage = document.getElementById('project-image');
+        const imagePlaceholder = document.getElementById('image-placeholder');
+        const buscarBtn = document.getElementById('buscar-projeto-btn');
+        const listarBtn = document.getElementById('listar-projetos-btn');
+        const difficultyTitle = document.getElementById('difficulty-title');
+
+        const fullscreenModal = document.getElementById('fullscreen-modal');
+        const fullscreenImage = document.getElementById('fullscreen-image');
+        const closeModal = document.getElementById('close-modal');
+
+        const listModal = document.getElementById('list-modal');
+        const closeListModal = document.getElementById('close-list-modal');
+        const fileList = document.getElementById('file-list');
+
+        const rouletteWrapper = document.getElementById('roulette-wrapper');
+        const rouletteStrip = document.getElementById('roulette-strip');
+
+        let filesCache = {}; // Cache para cada dificuldade
+        let currentDifficulty = 'facil';
+
+        // Função para buscar os arquivos da API com paginação
+        const fetchFiles = async (folderId) => {
+            if (filesCache[folderId]) return filesCache[folderId];
+
+            let allFiles = [];
+            let pageToken = null;
+            const baseUrl = `https://www.googleapis.com/drive/v3/files?q='${folderId}'+in+parents&key=${GOOGLE_API_KEY}&fields=files(id,name,thumbnailLink)&pageSize=1000`;
+
+            do {
+                const url = pageToken ? `${baseUrl}&pageToken=${pageToken}` : baseUrl;
+                const response = await fetch(url);
+
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    throw new Error(`API Error: ${errorData.error.message || response.statusText}`);
+                }
+
+                const data = await response.json();
+                if (data.files) allFiles = allFiles.concat(data.files);
+                pageToken = data.nextPageToken;
+
+            } while (pageToken);
+
+            if (allFiles.length === 0) {
+                throw new Error("Nenhuma imagem encontrada nesta pasta.");
+            }
+
+            filesCache[folderId] = allFiles.map(file => ({ id: file.id, name: file.name, thumbnailLink: file.thumbnailLink }));
+            return filesCache[folderId];
+        };
+
+        const mostrarProjetoPorId = (id) => {
+            imagePlaceholder.style.display = 'block';
+            imagePlaceholder.textContent = 'Carregando imagem...';
+            projectImage.style.display = 'none';
+            const imageUrl = `https://lh3.googleusercontent.com/d/${id}`;
+            projectImage.src = imageUrl;
+            projectImage.onload = () => {
+                imagePlaceholder.style.display = 'none';
+                projectImage.style.display = 'block';
+            };
+            projectImage.onerror = () => {
+                imagePlaceholder.textContent = "Não foi possível carregar a imagem.";
+            };
+        };
+
+        window.selectDifficulty = (difficulty) => {
+            currentDifficulty = difficulty;
+
+            // Atualiza o título
+            difficultyTitle.textContent = `Projetos - ${difficulty.charAt(0).toUpperCase() + difficulty.slice(1)}`;
+
+            // Remove "active" de todos os botões
+            document.querySelectorAll('.difficulty-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+
+            // Adiciona "active" apenas no botão clicado
+            const selectedBtn = document.querySelector(`button[onclick="selectDifficulty('${difficulty}')"]`);
+            if (selectedBtn) selectedBtn.classList.add('active');
+
+            // Busca um novo projeto aleatório da nova dificuldade
+            buscarProjeto(true);
+        };
+
+
+        window.buscarProjeto = async (isDifficultyChange = false) => {
+            buscarBtn.disabled = true;
+            listarBtn.disabled = true;
+            buscarBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Sorteando...';
+
+            const folderId = FOLDER_IDS[currentDifficulty];
+            if (folderId.includes('ID_DA_SUA_PASTA')) {
+                imagePlaceholder.textContent = `Por favor, configure o ID da pasta "${currentDifficulty}" no código.`;
+                imagePlaceholder.style.display = 'block';
+                projectImage.style.display = 'none';
+                rouletteWrapper.style.display = 'none';
+                buscarBtn.disabled = false;
+                listarBtn.disabled = false;
+                buscarBtn.innerHTML = '<i class="fas fa-random mr-2"></i>Aleatório';
+                return;
+            }
+
+            if (isDifficultyChange) {
+                imagePlaceholder.style.display = 'block';
+                projectImage.style.display = 'none';
+                rouletteWrapper.style.display = 'none';
+            } else {
+                projectImage.style.display = 'none';
+                imagePlaceholder.style.display = 'none';
+                rouletteWrapper.style.display = 'block';
+                rouletteStrip.innerHTML = '';
+                rouletteStrip.style.transform = 'translateX(0px)';
+            }
+
+            try {
+                const files = await fetchFiles(folderId);
+                if (files.length === 0) throw new Error("Nenhum arquivo na pasta para sortear.");
+
+                const targetIndex = Math.floor(Math.random() * files.length);
+                const targetFile = files[targetIndex];
+
+                if (isDifficultyChange) {
+                    mostrarProjetoPorId(targetFile.id);
+                    buscarBtn.innerHTML = '<i class="fas fa-random mr-2"></i>Aleatório';
+                    buscarBtn.disabled = false;
+                    listarBtn.disabled = false;
+                    return;
+                }
+
+                // Lógica da Roleta
+                const spinCycles = 5;
+                const extendedFiles = Array(spinCycles).fill(files).flat();
+                extendedFiles.forEach(file => {
+                    const img = document.createElement('img');
+                    img.src = file.thumbnailLink;
+                    img.className = "h-24 w-24 object-cover rounded-md mx-2 border-2 border-transparent flex-shrink-0";
+                    rouletteStrip.appendChild(img);
+                });
+
+                const targetIndexInStrip = (spinCycles - 2) * files.length + targetIndex;
+                await new Promise(resolve => setTimeout(resolve, 100));
+
+                const targetElement = rouletteStrip.children[targetIndexInStrip];
+                const wrapperWidth = rouletteWrapper.offsetWidth;
+                const targetElementCenter = targetElement.offsetLeft + targetElement.offsetWidth / 2;
+                const randomOffset = (Math.random() - 0.5) * targetElement.offsetWidth * 0.8;
+                const finalPosition = (wrapperWidth / 2) - targetElementCenter - randomOffset;
+                rouletteStrip.style.transform = `translateX(${finalPosition}px)`;
+
+                setTimeout(() => {
+                    Array.from(rouletteStrip.children).forEach(child => child.style.opacity = '0.4');
+                    targetElement.style.opacity = '1';
+                    targetElement.classList.add('border-orange-500');
+                    setTimeout(() => {
+                        mostrarProjetoPorId(targetFile.id);
+                        rouletteWrapper.style.display = 'none';
+                        buscarBtn.innerHTML = '<i class="fas fa-random mr-2"></i>Aleatório';
+                        buscarBtn.disabled = false;
+                        listarBtn.disabled = false;
+                    }, 1000);
+                }, 4000);
+
+            } catch (error) {
+                console.error("Erro ao buscar projeto:", error);
+                imagePlaceholder.textContent = error.message;
+                imagePlaceholder.style.display = 'block';
+                rouletteWrapper.style.display = 'none';
+                buscarBtn.innerHTML = '<i class="fas fa-random mr-2"></i>Aleatório';
+                buscarBtn.disabled = false;
+                listarBtn.disabled = false;
+            }
+        };
+
+        window.listarProjetos = async () => {
+            fileList.innerHTML = '<p class="text-gray-400 flex items-center justify-center col-span-full"><i class="fas fa-spinner fa-spin mr-2"></i>Buscando arquivos...</p>';
+            listModal.style.display = 'flex';
+            const folderId = FOLDER_IDS[currentDifficulty];
+
+            try {
+                let files = await fetchFiles(folderId);
+
+                // --- Normaliza para garantir que temos um array de objetos com "name" ---
+                if (!Array.isArray(files)) {
+                    if (Array.isArray(files.files)) files = files.files;
+                    else if (Array.isArray(files.items)) files = files.items;
+                    else files = Object.values(files);
+                }
+
+                // Garante que existe uma propriedade "_name" legível
+                files = files.map(f => ({
+                    ...f,
+                    _name: (f.name ?? f.title ?? f.filename ?? f.originalFilename ?? f.id ?? '').toString()
+                }));
+
+                // DEBUG: veja no console qual a ordem recebida e qual a ordem após sort
+                console.log('Arquivos recebidos (antes):', files.map(f => f._name));
+
+                // Ordenação natural (numérica + alfabética), case-insensitive
+                const collator = new Intl.Collator(undefined, { numeric: true, sensitivity: 'base' });
+                files.sort((a, b) => collator.compare(a._name, b._name));
+
+                console.log('Arquivos ordenados (depois):', files.map(f => f._name));
+
+                // Renderiza a grade
+                fileList.innerHTML = '';
+                fileList.className = 'grid grid-cols-2 sm:grid-cols-4 gap-4';
+
+                files.forEach((file, idx) => {
+                    const cardItem = document.createElement('div');
+                    // opcional: guarda o índice no DOM para referência
+                    cardItem.dataset.index = idx;
+
+                    cardItem.innerHTML = `
+                <a href="#" class="block p-2 rounded-lg hover:bg-gray-700/50 transition-colors h-full flex flex-col text-center">
+                    <img src="${file.thumbnailLink ?? ''}" alt="Miniatura de ${file._name}" class="w-full h-24 object-cover rounded-md mb-2 border border-gray-600">
+                    <span class="text-orange-400 text-sm break-words mt-auto">${file._name}</span>
+                </a>
+            `;
+                    cardItem.onclick = (e) => {
+                        e.preventDefault();
+                        mostrarProjetoPorId(file.id ?? file.fileId ?? file);
+                        listModal.style.display = 'none';
+                    };
+                    fileList.appendChild(cardItem);
+                });
+
+            } catch (error) {
+                fileList.className = '';
+                fileList.innerHTML = `<p class="text-red-400 col-span-full text-center">${error.message}</p>`;
+            }
+        };
+
+
+
+        // --- LÓGICA DOS MODAIS ---
+        projectImage.addEventListener('click', () => {
+            if (projectImage.src && projectImage.style.display !== 'none') {
+                fullscreenImage.src = projectImage.src;
+                fullscreenModal.style.display = 'flex';
+            }
+        });
+        closeModal.addEventListener('click', () => { fullscreenModal.style.display = 'none'; fullscreenImage.src = ''; });
+        fullscreenModal.addEventListener('click', (e) => { if (e.target === fullscreenModal) { closeModal.click(); } });
+        closeListModal.addEventListener('click', () => { listModal.style.display = 'none'; });
+        listModal.addEventListener('click', (e) => { if (e.target === listModal) { closeListModal.click(); } });
+
+        // Inicia a aplicação
+        document.addEventListener('DOMContentLoaded', () => {
+            selectDifficulty('facil');
+        });
+    </script>
+    <!-- Rodapé -->
+    <footer class="fixed bottom-0 left-0 w-full p-4 text-center text-gray-500 text-xs">
+        <p>&copy; 2025 | Bruno A. Kohler, Matheus Gums & Tiago O. Menezes.</p>
+    </footer>
+
+    <!-- Importa o código JS externo -->
+    <script src="search-ui.js"></script>
+</body>
+
+</html>
