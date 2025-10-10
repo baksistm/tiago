@@ -1,0 +1,824 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="./style.css">
+    <title>Projetos Tiago</title>
+    <!-- Tailwind CSS para um design moderno e responsivo -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome para ícones -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --bg-color: #0d1b2a;
+            --text-color: #FFFFFF;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            background-image:
+                linear-gradient(rgba(255, 255, 255, 0.05) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255, 255, 255, 0.05) 1px, transparent 1px),
+                linear-gradient(rgba(255, 255, 255, 0.04) 2px, transparent 2px),
+                linear-gradient(90deg, rgba(255, 255, 255, 0.04) 2px, transparent 2px);
+            background-size: 20px 20px, 20px 20px, 100px 100px, 100px 100px;
+            background-position: -1px -1px, -1px -1px, -1px -1px, -1px -1px;
+            transition: background-color 0.5s ease;
+        }
+
+        .difficulty-btn.active {
+            background-color: #f97316 !important;
+        }
+
+        /* Cronômetro no canto superior direito */
+        #timer-overlay {
+            position: fixed;
+            top: 12px;
+            right: 12px;
+            background: rgba(17, 24, 39, 0.95);
+            color: #f97316;
+            padding: 8px 12px;
+            border-radius: 8px;
+            font-family: 'Inter', system-ui, Arial, sans-serif;
+            font-size: 14px;
+            font-weight: bold;
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.6);
+            z-index: 9999;
+            display: none;
+            align-items: center;
+            gap: 8px;
+            border: 1px solid #f97316;
+        }
+
+        /* Esconder botão do menu quando o menu está aberto */
+        #menu-btn.hidden {
+            display: none !important;
+        }
+
+        /* Aviso de saída chamativo */
+        #exit-warning {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: linear-gradient(135deg, #dc2626, #ef4444);
+            color: white;
+            padding: 30px 40px;
+            border-radius: 20px;
+            border: 4px solid #fbbf24;
+            box-shadow: 0 20px 50px rgba(220, 38, 38, 0.6), 0 0 0 4px rgba(251, 191, 36, 0.3);
+            z-index: 99999;
+            text-align: center;
+            font-family: 'Inter', sans-serif;
+            max-width: 90vw;
+            animation: alertPulse 0.8s ease-in-out infinite alternate;
+            display: none;
+        }
+
+        @keyframes alertPulse {
+            0% {
+                transform: translate(-50%, -50%) scale(1);
+            }
+
+            100% {
+                transform: translate(-50%, -50%) scale(1.05);
+            }
+        }
+
+        #exit-warning .warning-icon {
+            font-size: 4rem;
+            color: #fbbf24;
+            margin-bottom: 15px;
+            text-shadow: 0 0 20px rgba(251, 191, 36, 0.8);
+            animation: iconShake 0.5s ease-in-out infinite alternate;
+        }
+
+        @keyframes iconShake {
+            0% {
+                transform: rotate(-5deg);
+            }
+
+            100% {
+                transform: rotate(5deg);
+            }
+        }
+
+        #exit-warning h2 {
+            font-size: 2rem;
+            font-weight: bold;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+        }
+
+        #exit-warning p {
+            font-size: 1.2rem;
+            margin-bottom: 20px;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+        }
+
+        #exit-warning .warning-buttons {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        #exit-warning button {
+            padding: 12px 25px;
+            border: none;
+            border-radius: 10px;
+            font-weight: bold;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+        }
+
+        #exit-warning .stay-btn {
+            background: linear-gradient(135deg, #059669, #10b981);
+            color: white;
+            box-shadow: 0 4px 15px rgba(16, 185, 129, 0.4);
+        }
+
+        #exit-warning .stay-btn:hover {
+            background: linear-gradient(135deg, #047857, #059669);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(16, 185, 129, 0.6);
+        }
+
+        #exit-warning .leave-btn {
+            background: linear-gradient(135deg, #7c2d12, #dc2626);
+            color: white;
+            box-shadow: 0 4px 15px rgba(220, 38, 38, 0.4);
+        }
+
+        #exit-warning .leave-btn:hover {
+            background: linear-gradient(135deg, #991b1b, #7c2d12);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(220, 38, 38, 0.6);
+        }
+
+        #exit-warning-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(10px);
+            z-index: 99998;
+            display: none;
+        }
+    </style>
+
+</head>
+
+<body class="flex items-center justify-center min-h-screen">
+
+    <!-- Aviso de saída chamativo -->
+    <div id="exit-warning-overlay"></div>
+    <div id="exit-warning">
+        <div class="warning-icon">⚠️</div>
+        <h2>🚨 ATENÇÃO! 🚨</h2>
+        <p>Você está prestes a sair ou recarregar a página!<br>
+            <strong>Seu progresso atual será perdido!</strong>
+        </p>
+        <div class="warning-buttons">
+            <button class="stay-btn" onclick="cancelExit()">
+                <i class="fas fa-shield-alt"></i> Continuar Aqui
+            </button>
+            <button class="leave-btn" onclick="confirmExit()">
+                <i class="fas fa-sign-out-alt"></i> Sair Mesmo Assim
+            </button>
+        </div>
+    </div>
+
+    <!-- Container Principal -->
+    <div class="w-full max-w-lg p-4">
+
+        <!-- Cronômetro no canto superior direito -->
+        <div id="timer-overlay">
+            ⏱️ <span id="timer-text">00:00</span>
+        </div>
+
+        <!-- Botão do menu -->
+        <button id="menu-btn"
+            class="fixed top-4 left-4 bg-gray-800 hover:bg-gray-700 text-white p-3 rounded-full shadow-lg z-50">
+            ☰ Menu
+        </button>
+
+        <!-- Menu lateral -->
+        <div id="side-menu"
+            class="fixed top-0 left-0 h-full w-64 bg-gray-800 shadow-2xl transform -translate-x-full transition-transform duration-300 z-40">
+            <div class="p-4 border-b border-gray-700 flex justify-between items-center">
+                <h2 class="text-xl font-bold">Menu</h2>
+                <button id="close-menu" class="text-4xl hover:text-red-400">&times;</button>
+            </div>
+
+            <div class="p-4">
+                <button id="show-history" class="w-full bg-gray-700 hover:bg-gray-600 py-2 rounded-lg transition">Abrir
+                    Histórico</button>
+            </div>
+
+            <div id="history-list" class="p-4 hidden max-h-[80vh] overflow-y-auto"></div>
+        </div>
+
+        <!-- Tela cheia da imagem -->
+        <div id="fullscreen" class="hidden fixed inset-0 bg-black bg-opacity-4 flex items-center justify-center z-50">
+            <img id="fullscreen-img" src="" alt="" class="max-w-[90%] max-h-[90%] rounded-lg shadow-2xl">
+            <button id="close-fullscreen"
+                class="absolute top- right-6 text-6xl text-white hover:text-red-400">&times;</button>
+        </div>
+
+        <!-- Container da Aplicação Principal -->
+        <div id="app-container" class="quadrado vertical principal">
+            <div class="bg-gray-800/50 border border-gray-700 rounded-2xl p-6 flex flex-col gap-6">
+                <!-- Logo e Título -->
+                <img src="logo-tiago.png" alt="Logo"
+                    class="logo-imagem mx-auto cursor-pointer transition-transform duration-300 hover:scale-105"
+                    id="logo">
+
+                <h1 id="difficulty-title" class="text-3xl font-bold text-white text-center mt-4">
+                    Visualizador de Projetos
+                </h1>
+
+
+                <!-- Seletores de Dificuldade -->
+                <div id="difficulty-selector" class="grid grid-cols-2 sm:grid-cols-4 gap-2">
+                    <button onclick="selectDifficulty('facil')"
+                        class="difficulty-btn w-full bg-gray-700 text-white font-bold py-2 px-3 rounded-lg hover:bg-gray-600 transition-all duration-300">Fácil</button>
+                    <button onclick="selectDifficulty('medio')"
+                        class="difficulty-btn w-full bg-gray-700 text-white font-bold py-2 px-3 rounded-lg hover:bg-gray-600 transition-all duration-300">Médio</button>
+                    <button onclick="selectDifficulty('dificil')"
+                        class="difficulty-btn w-full bg-gray-700 text-white font-bold py-2 px-3 rounded-lg hover:bg-gray-600 transition-all duration-300">Difícil</button>
+                    <button onclick="selectDifficulty('desafio')"
+                        class="difficulty-btn w-full bg-gray-700 text-white font-bold py-2 px-3 rounded-lg hover:bg-gray-600 transition-all duration-300">Desafio</button>
+                    <div class="col-span-2 sm:col-span-4 flex justify-center mt-2">
+                        <button onclick="selectDifficulty('chapametálica')"
+                            class="difficulty-btn bg-gray-700 text-white font-bold py-2 px-6 rounded-lg hover:bg-gray-600 transition-all duration-300">Chapa
+                            Metálica</button>
+                        <button class="campeonato-btn" onclick="selectDifficulty('campeonato')"
+                            class="difficulty-btn w-full bg-gray-700 text-white font-bold py-2 px-3 rounded-lg hover:bg-gray-600 transition-all duration-300">Campeonato</button>
+                    </div>
+                </div>
+
+                <!-- Botões Aleatório e Ver Todos -->
+                <div class="flex space-x-2">
+                    <button id="buscar-projeto-btn" onclick="buscarProjeto()"
+                        class="w-full bg-orange-600 text-white font-bold py-3 px-4 rounded-lg hover:bg-orange-700 transition-all duration-300 text-lg shadow-lg shadow-orange-600/20">
+                        <i class="fas fa-random mr-2"></i>Aleatório
+                    </button>
+                    <button id="listar-projetos-btn" onclick="listarProjetos()"
+                        class="w-full bg-gray-700 text-white font-bold py-3 px-4 rounded-lg hover:bg-gray-600 transition-all duration-300 text-lg shadow-lg">
+                        <i class="fas fa-list mr-2"></i>Ver todos
+                    </button>
+                </div>
+
+                <!-- Área de exibição da imagem -->
+                <div id="image-display"
+                    class="mt-2 p-6 border-2 border-dashed border-gray-700 rounded-2xl min-h-[250px] flex flex-col items-center justify-center bg-gray-800/70 shadow-lg shadow-black/30">
+                    <p id="image-placeholder" class="text-gray-400 text-lg mb-2">Imagem do Projeto</p>
+                    <img id="project-image" src="" alt="Imagem do Projeto"
+                        class="max-w-full max-h-[400px] rounded-xl cursor-pointer" style="display: none;" />
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Roleta de Animação -->
+    <div id="roulette-wrapper" class="w-full relative h-28 overflow-hidden mt-4" style="display: none;">
+        <div
+            class="absolute top-0 left-1/2 -translate-x-1/2 w-1 h-full bg-orange-500 z-20 rounded shadow-lg shadow-orange-500/50">
+        </div>
+        <div id="roulette-strip" class="absolute top-0 left-0 h-full flex items-center"
+            style="transition: transform 4000ms cubic-bezier(0.25, 1, 0.5, 1);"></div>
+    </div>
+
+    <!-- Modal de Tela Cheia -->
+    <div id="fullscreen-modal"
+        class="fixed inset-0 bg-black bg-opacity-90 flex items-center justify-center z-50 backdrop-blur-sm"
+        style="display: none; background-color: #242627">
+        <span id="close-modal"
+            class="absolute top-14 right-6 text-white text-6xl font-bold cursor-pointer hover:text-gray-300 transition-colors">&times;</span>
+
+        <img id="fullscreen-image" src="" alt="Imagem do Projeto em Tela Cheia" class="imagem-fullscreen">
+    </div>
+
+    <!-- Modal da Lista de Arquivos -->
+    <div id="list-modal"
+        class="fixed inset-0 bg-black bg-opacity-90 flex items-center justify-center z-50 backdrop-blur-sm p-4"
+        style="display: none;">
+        <div class="glass-panel rounded-2xl shadow-2xl w-full max-w-3xl p-6 relative">
+            <span id="close-list-modal"
+                class="absolute top-4 right-5 text-white text-5xl font-bold cursor-pointer hover:text-gray-300">&times;</span>
+            <h2 class="text-2xl font-bold text-white mb-4">Lista de Projetos</h2>
+            <!-- Barra de Pesquisa -->
+            <div class="mb-4">
+                <input id="search-bar" type="text" placeholder="Pesquisar projeto..."
+                    class="w-full p-2 rounded-lg bg-gray-800 text-white border border-gray-600 focus:ring-2 focus:ring-orange-500 focus:outline-none" />
+            </div>
+            <div id="file-list-container" class="max-h-[70vh] overflow-y-auto pr-2">
+                <div id="file-list" class="space-y-2 text-left"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Rodapé -->
+    <footer class="fixed bottom-0 left-0 w-full p-4 text-center text-gray-500 text-xs">
+        <p>&copy; 2025 | Bruno A. Kohler, Matheus Gums & Tiago O. Menezes.</p>
+    </footer>
+
+    <script>
+        // --- CONFIGURAÇÃO DA API E PASTAS DO GOOGLE DRIVE ---
+        const GOOGLE_API_KEY = 'AIzaSyB_N0r6Sd8pDG79ZmxpOmmp7wh7191_iU8';
+        const FOLDER_IDS = {
+            facil: '1BQrlO9qsQVkI9VG5P6OLdlffYcLh_QnW',
+            medio: '1zRt7m8G7RsOpK-5eUccUtlnTbX76hS0a',
+            dificil: '1GsmAxBq9c-wQvHakISUcWgm96P8eLJhR',
+            desafio: '1QQTbs3fEw4xEzDadI_YhMa4Cvn0Ttik0',
+            chapametálica: '1lzvGtQcj9aQCLLQmKnUdQf6XkXSVkXQC',
+            campeonato: '1fv4ZAfoOWhAmYKZTgWhpxXkpsU5Py-hR'
+        };
+
+        // --- ELEMENTOS DO DOM ---
+        const projectImage = document.getElementById('project-image');
+        const imagePlaceholder = document.getElementById('image-placeholder');
+        const buscarBtn = document.getElementById('buscar-projeto-btn');
+        const listarBtn = document.getElementById('listar-projetos-btn');
+        const difficultyTitle = document.getElementById('difficulty-title');
+        const fullscreenModal = document.getElementById('fullscreen-modal');
+        const fullscreenImage = document.getElementById('fullscreen-image');
+        const closeModal = document.getElementById('close-modal');
+        const listModal = document.getElementById('list-modal');
+        const closeListModal = document.getElementById('close-list-modal');
+        const fileList = document.getElementById('file-list');
+        const searchBar = document.getElementById('search-bar');
+        const rouletteWrapper = document.getElementById('roulette-wrapper');
+        const rouletteStrip = document.getElementById('roulette-strip');
+        const menuBtn = document.getElementById('menu-btn');
+        const sideMenu = document.getElementById('side-menu');
+        const closeMenu = document.getElementById('close-menu');
+        const showHistoryBtn = document.getElementById('show-history');
+        const historyList = document.getElementById('history-list');
+        const fullscreenDiv = document.getElementById('fullscreen');
+        const fullscreenImg = document.getElementById('fullscreen-img');
+        const closeFullscreen = document.getElementById('close-fullscreen');
+        const timerOverlay = document.getElementById('timer-overlay');
+        const timerText = document.getElementById('timer-text');
+        const exitWarning = document.getElementById('exit-warning');
+        const exitWarningOverlay = document.getElementById('exit-warning-overlay');
+
+        // --- VARIÁVEIS DE ESTADO ---
+        let filesCache = {};
+        let currentDifficulty = 'facil';
+        let projectHistory = [];
+        let currentImageIndex = 0;
+        let timerInterval = null;
+        let currentSessionStartTime = null;
+        let currentImageStartTime = null;
+        let currentImageSeconds = 0;
+        let isTimerRunning = false;
+        let shouldExit = false;
+
+        // --- FUNÇÕES DE TIMER/Cronômetro ---
+        function formatTime(seconds) {
+            const mins = Math.floor(seconds / 60);
+            const secs = seconds % 60;
+            return `${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
+        }
+
+        function startTimer() {
+            if (isTimerRunning) return;
+
+            isTimerRunning = true;
+            timerOverlay.style.display = 'flex';
+            currentImageStartTime = Date.now();
+            currentImageSeconds = 0;
+
+            timerInterval = setInterval(() => {
+                currentImageSeconds++;
+                timerText.textContent = formatTime(currentImageSeconds);
+            }, 1000);
+        }
+
+        function stopTimer() {
+            if (timerInterval) {
+                clearInterval(timerInterval);
+                timerInterval = null;
+            }
+            isTimerRunning = false;
+        }
+
+        function resetTimer() {
+            stopTimer();
+            currentImageSeconds = 0;
+            timerText.textContent = '00:00';
+            timerOverlay.style.display = 'none';
+        }
+
+        // --- FUNÇÕES DE AVISO DE SAÍDA ---
+        function showExitWarning() {
+            exitWarningOverlay.style.display = 'block';
+            exitWarning.style.display = 'block';
+        }
+
+        function hideExitWarning() {
+            exitWarningOverlay.style.display = 'none';
+            exitWarning.style.display = 'none';
+        }
+
+        window.cancelExit = function () {
+            shouldExit = false;
+            hideExitWarning();
+        }
+
+        window.confirmExit = function () {
+            shouldExit = true;
+            hideExitWarning();
+            window.location.reload();
+        }
+
+        // --- FUNÇÕES DE HISTÓRICO ---
+        function addToHistory(imageName, timeSpent, imageUrl) {
+            const now = new Date();
+
+            projectHistory.push({
+                id: projectHistory.length + 1,
+                name: imageName,
+                startTime: now.toLocaleTimeString('pt-BR'),
+                timeSpent: timeSpent,
+                timestamp: now.toISOString(),
+                src: imageUrl
+            });
+
+            // Limitar histórico aos últimos 100 itens
+            if (projectHistory.length > 100) {
+                projectHistory = projectHistory.slice(-100);
+            }
+        }
+
+        function renderHistory() {
+            historyList.innerHTML = "";
+
+            if (projectHistory.length === 0) {
+                historyList.innerHTML = "<p class='text-gray-400 text-sm'>Nenhum registro ainda...</p>";
+                return;
+            }
+
+            // Ordenar do mais recente para o mais antigo
+            const sortedHistory = [...projectHistory].reverse();
+
+            sortedHistory.forEach((item, index) => {
+                const el = document.createElement("div");
+                el.className = "border-b border-gray-700 py-3 cursor-pointer hover:text-blue-400 transition-colors";
+
+                const ordinal = item.id + "ª";
+
+                el.innerHTML = `
+                    <div class="flex justify-between items-start">
+                        <div class="flex-1">
+                            <p class="font-semibold text-orange-400">${ordinal} - ${item.name}</p>
+                            <p class="text-sm text-gray-300 mt-1">Início: ${item.startTime}</p>
+                            <p class="text-sm text-green-400">Tempo: ${formatTime(item.timeSpent)}</p>
+                        </div>
+                        <div class="text-xs text-gray-500 ml-2">
+                            ${new Date(item.timestamp).toLocaleDateString('pt-BR')}
+                        </div>
+                    </div>
+                `;
+
+                el.addEventListener('click', () => {
+                    fullscreenImg.src = item.src || '';
+                    fullscreenDiv.classList.remove('hidden');
+                });
+
+                historyList.appendChild(el);
+            });
+        }
+
+        // --- FUNÇÕES DE IMAGEM ---
+        function handleImageChange(imageId, imageName) {
+            // Salvar tempo da imagem anterior no histórico
+            if (isTimerRunning && currentImageSeconds > 0) {
+                const previousImageName = projectImage.alt || 'Imagem anterior';
+                const previousImageUrl = projectImage.src;
+                addToHistory(previousImageName, currentImageSeconds, previousImageUrl);
+            }
+
+            // Resetar e iniciar timer para nova imagem
+            resetTimer();
+
+            // Atualizar imagem
+            const imageUrl = `https://lh3.googleusercontent.com/d/${imageId}`;
+            projectImage.src = imageUrl;
+            projectImage.alt = imageName;
+            projectImage.style.display = 'block';
+            imagePlaceholder.style.display = 'none';
+
+            // Iniciar cronômetro para a nova imagem
+            startTimer();
+        }
+
+        // --- FUNÇÕES DE API ---
+        const fetchFiles = async (folderId) => {
+            if (filesCache[folderId]) return filesCache[folderId];
+
+            let allFiles = [];
+            let pageToken = null;
+            const baseUrl = `https://www.googleapis.com/drive/v3/files?q='${folderId}'+in+parents&key=${GOOGLE_API_KEY}&fields=files(id,name,thumbnailLink)&pageSize=1000`;
+
+            do {
+                const url = pageToken ? `${baseUrl}&pageToken=${pageToken}` : baseUrl;
+                const response = await fetch(url);
+
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    throw new Error(`API Error: ${errorData.error.message || response.statusText}`);
+                }
+
+                const data = await response.json();
+                if (data.files) allFiles = allFiles.concat(data.files);
+                pageToken = data.nextPageToken;
+
+            } while (pageToken);
+
+            if (allFiles.length === 0) {
+                throw new Error("Nenhuma imagem encontrada nesta pasta.");
+            }
+
+            filesCache[folderId] = allFiles.map(file => ({
+                id: file.id,
+                name: file.name,
+                thumbnailLink: file.thumbnailLink
+            }));
+            return filesCache[folderId];
+        };
+
+        // --- FUNÇÕES DA APLICAÇÃO ---
+        window.selectDifficulty = (difficulty) => {
+            currentDifficulty = difficulty;
+            difficultyTitle.textContent = `Projetos - ${difficulty.charAt(0).toUpperCase() + difficulty.slice(1)}`;
+
+            document.querySelectorAll('.difficulty-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+
+            const selectedBtn = document.querySelector(`button[onclick="selectDifficulty('${difficulty}')"]`);
+            if (selectedBtn) selectedBtn.classList.add('active');
+
+            // Resetar timer ao mudar dificuldade
+            resetTimer();
+
+            buscarProjeto(true);
+        };
+
+        window.buscarProjeto = async (isDifficultyChange = false) => {
+            buscarBtn.disabled = true;
+            listarBtn.disabled = true;
+            buscarBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Sorteando...';
+
+            const folderId = FOLDER_IDS[currentDifficulty];
+
+            if (!folderId || folderId.includes('ID_DA_SUA_PASTA')) {
+                imagePlaceholder.textContent = `Por favor, configure o ID da pasta "${currentDifficulty}" no código.`;
+                imagePlaceholder.style.display = 'block';
+                projectImage.style.display = 'none';
+                rouletteWrapper.style.display = 'none';
+                buscarBtn.disabled = false;
+                listarBtn.disabled = false;
+                buscarBtn.innerHTML = '<i class="fas fa-random mr-2"></i>Aleatório';
+                return;
+            }
+
+            if (isDifficultyChange) {
+                imagePlaceholder.style.display = 'block';
+                imagePlaceholder.textContent = 'Carregando...';
+                projectImage.style.display = 'none';
+                rouletteWrapper.style.display = 'none';
+            } else {
+                projectImage.style.display = 'none';
+                imagePlaceholder.style.display = 'none';
+                rouletteWrapper.style.display = 'block';
+                rouletteStrip.innerHTML = '';
+                rouletteStrip.style.transform = 'translateX(0px)';
+            }
+
+            try {
+                const files = await fetchFiles(folderId);
+                if (files.length === 0) throw new Error("Nenhum arquivo na pasta para sortear.");
+
+                const targetIndex = Math.floor(Math.random() * files.length);
+                const targetFile = files[targetIndex];
+
+                if (isDifficultyChange) {
+                    handleImageChange(targetFile.id, targetFile.name);
+                    buscarBtn.innerHTML = '<i class="fas fa-random mr-2"></i>Aleatório';
+                    buscarBtn.disabled = false;
+                    listarBtn.disabled = false;
+                    return;
+                }
+
+                // Lógica da Roleta
+                const spinCycles = 5;
+                const extendedFiles = Array(spinCycles).fill(files).flat();
+                extendedFiles.forEach(file => {
+                    const img = document.createElement('img');
+                    img.src = file.thumbnailLink;
+                    img.className = "h-24 w-24 object-cover rounded-md mx-2 border-2 border-transparent flex-shrink-0";
+                    rouletteStrip.appendChild(img);
+                });
+
+                const targetIndexInStrip = (spinCycles - 2) * files.length + targetIndex;
+                await new Promise(resolve => setTimeout(resolve, 100));
+
+                const targetElement = rouletteStrip.children[targetIndexInStrip];
+                const wrapperWidth = rouletteWrapper.offsetWidth;
+                const targetElementCenter = targetElement.offsetLeft + targetElement.offsetWidth / 2;
+                const randomOffset = (Math.random() - 0.5) * targetElement.offsetWidth * 0.8;
+                const finalPosition = (wrapperWidth / 2) - targetElementCenter - randomOffset;
+                rouletteStrip.style.transform = `translateX(${finalPosition}px)`;
+
+                setTimeout(() => {
+                    Array.from(rouletteStrip.children).forEach(child => child.style.opacity = '0.4');
+                    targetElement.style.opacity = '1';
+                    targetElement.classList.add('border-orange-500');
+                    setTimeout(() => {
+                        handleImageChange(targetFile.id, targetFile.name);
+                        rouletteWrapper.style.display = 'none';
+                        buscarBtn.innerHTML = '<i class="fas fa-random mr-2"></i>Aleatório';
+                        buscarBtn.disabled = false;
+                        listarBtn.disabled = false;
+                    }, 1000);
+                }, 4000);
+
+            } catch (error) {
+                console.error("Erro ao buscar projeto:", error);
+                imagePlaceholder.textContent = error.message;
+                imagePlaceholder.style.display = 'block';
+                rouletteWrapper.style.display = 'none';
+                buscarBtn.innerHTML = '<i class="fas fa-random mr-2"></i>Aleatório';
+                buscarBtn.disabled = false;
+                listarBtn.disabled = false;
+            }
+        };
+
+        window.listarProjetos = async () => {
+            fileList.innerHTML = '<p class="text-gray-400 flex items-center justify-center"><i class="fas fa-spinner fa-spin mr-2"></i>Buscando arquivos...</p>';
+            listModal.style.display = 'flex';
+            const folderId = FOLDER_IDS[currentDifficulty];
+
+            try {
+                let files = await fetchFiles(folderId);
+                files.sort((a, b) => a.name.localeCompare(b.name, 'pt-BR', { numeric: true }));
+
+                fileList.innerHTML = '';
+                fileList.className = 'grid grid-cols-2 sm:grid-cols-4 gap-4';
+
+                files.forEach((file) => {
+                    const cardItem = document.createElement('div');
+                    cardItem.innerHTML = `
+                        <a href="#" class="block p-2 rounded-lg hover:bg-gray-700/50 transition-colors h-full flex flex-col text-center">
+                            <img src="${file.thumbnailLink}" alt="Miniatura de ${file.name}" class="w-full h-24 object-cover rounded-md mb-2 border border-gray-600">
+                            <span class="text-orange-400 text-sm break-words mt-auto">${file.name}</span>
+                        </a>
+                    `;
+                    cardItem.onclick = (e) => {
+                        e.preventDefault();
+                        handleImageChange(file.id, file.name);
+                        listModal.style.display = 'none';
+                    };
+                    fileList.appendChild(cardItem);
+                });
+
+                // Adicionar funcionalidade de pesquisa
+                searchBar.oninput = (e) => {
+                    const searchTerm = e.target.value.toLowerCase();
+                    const cards = fileList.children;
+                    Array.from(cards).forEach(card => {
+                        const fileName = card.querySelector('span').textContent.toLowerCase();
+                        if (fileName.includes(searchTerm)) {
+                            card.style.display = 'block';
+                        } else {
+                            card.style.display = 'none';
+                        }
+                    });
+                };
+
+            } catch (error) {
+                fileList.className = '';
+                fileList.innerHTML = `<p class="text-red-400 text-center">${error.message}</p>`;
+            }
+        };
+
+        // --- EVENT LISTENERS ---
+        projectImage.addEventListener('click', () => {
+            if (projectImage.src && projectImage.style.display !== 'none') {
+                fullscreenImage.src = projectImage.src;
+                fullscreenModal.style.display = 'flex';
+            }
+        });
+
+
+
+        fullscreenModal.addEventListener('click', (e) => {
+            if (e.target === fullscreenModal) {
+                closeModal.click();
+            }
+        });
+
+        closeModal.addEventListener('click', () => {
+            fullscreenModal.style.display = 'none';
+            fullscreenImage.src = '';
+        });
+
+        closeListModal.addEventListener('click', () => {
+            listModal.style.display = 'none';
+            searchBar.value = '';
+        });
+
+        listModal.addEventListener('click', (e) => {
+            if (e.target === listModal) {
+                closeListModal.click();
+            }
+        });
+
+        // Menu functionality
+        menuBtn.addEventListener('click', () => {
+            sideMenu.classList.remove('-translate-x-full');
+            menuBtn.classList.add('hidden');
+        });
+
+        closeMenu.addEventListener('click', () => {
+            sideMenu.classList.add('-translate-x-full');
+            menuBtn.classList.remove('hidden');
+        });
+
+        showHistoryBtn.addEventListener('click', () => {
+            historyList.classList.toggle('hidden');
+            if (!historyList.classList.contains('hidden')) renderHistory();
+        });
+
+        closeFullscreen.addEventListener('click', () => {
+            fullscreenDiv.classList.add('hidden');
+        });
+
+        // Fechar menu ao clicar fora
+        document.addEventListener('click', (e) => {
+            if (!sideMenu.contains(e.target) && !menuBtn.contains(e.target)) {
+                if (!sideMenu.classList.contains('-translate-x-full')) {
+                    sideMenu.classList.add('-translate-x-full');
+                    menuBtn.classList.remove('hidden');
+                }
+            }
+        });
+
+        // Aviso de saída personalizado
+        window.addEventListener('beforeunload', (e) => {
+            if (!shouldExit && isTimerRunning) {
+                e.preventDefault();
+                e.returnValue = '';
+
+                // Mostrar aviso personalizado
+                setTimeout(() => {
+                    showExitWarning();
+                }, 10);
+
+                return '';
+            }
+        });
+
+        // Inicia a aplicação
+        document.addEventListener('DOMContentLoaded', () => {
+            selectDifficulty('facil');
+        });
+
+        // Limpar timer ao sair da página
+        window.addEventListener('beforeunload', () => {
+            if (isTimerRunning && currentImageSeconds > 0) {
+                const currentImageName = projectImage.alt || 'Imagem atual';
+                const currentImageUrl = projectImage.src;
+                addToHistory(currentImageName, currentImageSeconds, currentImageUrl);
+            }
+            stopTimer();
+        });
+
+    </script>
+    <script>
+        const logo = document.getElementById('logo');
+        let logoNormal = 'logo-tiago.png';
+        let logoMetalica = 'mecanica-tiago-metalica.png';
+        let mostrandoMetalica = false;
+
+        logo.addEventListener('click', () => {
+            mostrandoMetalica = !mostrandoMetalica;
+            logo.src = mostrandoMetalica ? logoMetalica : logoNormal;
+        });
+    </script>
+</body>
+
+</html>

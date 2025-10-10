@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Administração</title>
+    <link rel="stylesheet" href="admin.css">
+</head>
+
+<body>
+    <script src="admin-auth.js"></script>
+    <script src="logout.js"></script>
+
+    <header class="admin-header">
+        <h1>Área Administrativa</h1>
+        <p>Área de gerenciamento do site</p>
+        <button id="logoutBtn" class="logout-btn">Sair</button>
+    </header>
+
+    <main class="admin-container">
+        <section class="download-area">
+            <h2>Arquivos Disponíveis</h2>
+            <div id="file-list" class="file-list">
+                <!-- Os arquivos vão aparecer aqui via JS -->
+            </div>
+        </section>
+
+        <section class="repo-area">
+            <h2>Repositório GitHub</h2>
+            <p class="p-github">Acesse o repositório com todos os códigos:</p>
+            <a href="https://github.com/baksistm" target="_blank" class="btn-github">
+                🌐 Abrir Repositório
+            </a>
+        </section>
+
+        <section class="drive-area">
+            <h2>Projetos no Google Drive</h2>
+            <p class="p-drive">Acesse as pastas com todos os projetos</p>
+            <div class="drive-links">
+                <a href="https://drive.google.com/drive/folders/1BQrlO9qsQVkI9VG5P6OLdlffYcLh_QnW?usp=sharing" target="_blank">📂
+                    Fácil</a>
+                <a href="https://drive.google.com/drive/folders/1zRt7m8G7RsOpK-5eUccUtlnTbX76hS0a?usp=sharing" target="_blank">📂
+                    Médio</a>
+                <a href="https://drive.google.com/drive/folders/1GsmAxBq9c-wQvHakISUcWgm96P8eLJhR?usp=sharing" target="_blank">📂
+                    Difícil</a>
+                <a href="https://drive.google.com/drive/folders/1QQTbs3fEw4xEzDadI_YhMa4Cvn0Ttik0?usp=sharing" target="_blank">📂
+                    Desafio</a>
+                <a href="https://drive.google.com/drive/folders/1lzvGtQcj9aQCLLQmKnUdQf6XkXSVkXQC?usp=sharing" target="_blank">📂
+                    Chapa Metalica</a>
+            </div>
+        </section>
+    </main>
+
+    <footer class="admin-footer">
+        <p>&copy; 2025 | Painel de Administração criado por Bruno A. Kohler</p>
+    </footer>
+
+    <script src="admin.js"></script>
+</body>
+
+</html>
